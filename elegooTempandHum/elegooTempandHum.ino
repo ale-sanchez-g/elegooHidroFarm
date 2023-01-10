@@ -1,9 +1,9 @@
 #include "DHT.h"
 #include <LiquidCrystal.h>
+#include "time_func.h"
 
 #define DHTPIN 8     // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT11 // DHT sensor types DHT11, DHT22, DHT21 
-
 
 // Initialize DHT sensor.
 // Note that older versions of this library took an optional third parameter to
@@ -27,7 +27,9 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 void setup() {
 
-  // Serial.begin(9600); // disable as it breaks the LCD display
+  Serial.begin(9600); // disable as it breaks the LCD display
+  
+  timeTeller();
 
   // this is to set up the display view on the LCD screen
   analogWrite(LCDdisplay,100); // Generate PWM signal at pin D11, value of 100 (out of 255)
@@ -45,6 +47,8 @@ void setup() {
 
 void loop() {  
   
+  timeTeller();
+
   lcd.print("Gathering...");
      
   // Reading temperature or humidity takes about 250 milliseconds!
@@ -92,7 +96,7 @@ void loop() {
     digitalWrite(relayPIN, HIGH);
     delay(waterFor * 1000);
     digitalWrite(relayPIN, LOW);
-    waterTimer = (waterTimer - waterFor);
+    waterTimer -=  waterFor;
   }
   
   // Display temperature for 5 seconds if not flooding
@@ -107,7 +111,7 @@ void loop() {
   lcd.clear();
   
   // reseting variables
-  waterTimer = (waterTimer - 17);
+  waterTimer -= 17;
   startTemp = newTemp;
   startHum = newHum;
 
